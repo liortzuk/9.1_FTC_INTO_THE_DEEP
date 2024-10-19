@@ -1,0 +1,44 @@
+//
+// build.gradle in TeamCode
+//
+// Most of the definitions for building your module reside in a common, shared
+// file 'build.common.gradle'. Being factored in this way makes it easier to
+// integrate updates to the FTC into your code. If you really need to customize
+// the build definitions, you can place those customizations in this file, but
+// please think carefully as to whether such customizations are really necessary
+// before doing so.
+
+
+// Custom definitions may go here
+
+// Include common definitions from above.
+apply from: '../build.common.gradle'
+apply from: '../build.dependencies.gradle'
+
+android {
+    namespace = 'org.firstinspires.ftc.teamcode'
+    packagingOptions {
+        jniLibs.useLegacyPackaging true
+    }
+}
+
+dependencies {
+    implementation 'org.firstinspires.ftc:Inspection:9.0.1'
+    implementation 'org.firstinspires.ftc:Blocks:9.0.1'
+    implementation 'org.firstinspires.ftc:Tfod:9.0.1'
+    implementation 'org.firstinspires.ftc:RobotCore:9.0.1'
+    implementation 'org.firstinspires.ftc:RobotServer:9.0.1'
+    implementation 'org.firstinspires.ftc:OnBotJava:9.0.1'
+    implementation 'org.firstinspires.ftc:Hardware:9.0.1'
+    implementation 'org.firstinspires.ftc:FtcCommon:9.0.1'
+    implementation 'androidx.appcompat:appcompat:1.5.1'
+
+    implementation project(':FtcRobotController')
+    //implementation 'org.openpnp:opencv:4.7.0-0'
+
+    implementation 'com.acmerobotics.dashboard:dashboard:0.4.6'
+    implementation 'com.github.bumptech.glide:glide:4.12.0'
+    implementation 'org.openftc:opencv-repackaged-bundled-dylibs:4.7.0-A'
+
+
+}
