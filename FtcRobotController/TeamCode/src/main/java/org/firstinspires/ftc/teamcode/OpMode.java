@@ -15,6 +15,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
@@ -27,21 +28,13 @@ import org.openftc.easyopencv.OpenCvCamera;
 
 public abstract class OpMode extends LinearOpMode {
 
-    protected TouchSensor touch;
-    protected Servo trigger, angle;
-    protected CRServo LeftServo, RightServo;
-    protected DcMotorEx DriveFrontLeft, DriveFrontRight, DriveBackLeft, DriveBackRight, armR, armL, intake, ANGLE;
+    protected CRServo intake_AR, intake_AL, intake_right, intake_left, intake_center, intAR;
+    protected DcMotorEx DriveFrontLeft, DriveFrontRight, DriveBackLeft, DriveBackRight, armR, armL;
     protected ElapsedTime runtime = new ElapsedTime();
-    protected float gyroCalibration = 0;
-    protected BNO055IMU imu;
 
     protected IMU Imu;
-    public Camera Cam;
+
     FtcDashboard dashboard;
-
-    private TfodProcessor tfod;
-
-    private VisionPortal visionPortal;
 
     void initialize() {
         DriveFrontLeft = hardwareMap.get(DcMotorEx.class, "FL");
@@ -68,41 +61,35 @@ public abstract class OpMode extends LinearOpMode {
         DriveBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         DriveBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        armR = hardwareMap.get(DcMotorEx.class,"ELEVATOR R");
-        armR.setDirection(DcMotorEx.Direction.FORWARD);
+        armR = hardwareMap.get(DcMotorEx.class,"ER");
+        armR.setDirection(DcMotorEx.Direction.REVERSE );
         armR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         armR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         armR.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 
-        armL = hardwareMap.get(DcMotorEx.class,"ELEVATOR L");
-        armL.setDirection(DcMotorEx.Direction.FORWARD);
+        armL = hardwareMap.get(DcMotorEx.class,"EL");
+        armL.setDirection(DcMotorEx.Direction.REVERSE);
         armL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         armL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         armL.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 
-        intake = hardwareMap.get(DcMotorEx.class,"WHEELS");
-        intake.setDirection(DcMotorEx.Direction.REVERSE);
-        intake.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        intake_right = hardwareMap.get(CRServo.class, "axonR");
+        intake_left = hardwareMap.get(CRServo.class, "axonL");
 
-        ANGLE = hardwareMap.get(DcMotorEx.class,"ANGLE");
-        ANGLE.setDirection(DcMotorEx.Direction.FORWARD);
-        ANGLE.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        intake_AR = hardwareMap.get(CRServo.class, "ointR");
+        intake_AL = hardwareMap.get(CRServo.class, "ointL");
 
-        LeftServo = hardwareMap.get(CRServo.class, "Left Servo");
-        RightServo = hardwareMap.get(CRServo.class, "Right Servo");
+        intAR =  hardwareMap.get(CRServo.class, "intAR");
 
-        angle = hardwareMap.get(Servo.class, "angle");
-        trigger = hardwareMap.get(Servo.class, "trigger");
+        intake_center = hardwareMap.get(CRServo.class, "intakeWheel");
 
-
-      //  touch = hardwareMap.get(TouchSensor.class, "touch");
 
         // Retrieve the IMU from the hardware map
         Imu = hardwareMap.get(IMU.class, "imu");
         // Adjust the orientation parameters to match your robot in our case it's UP and LEFT
         IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
-                RevHubOrientationOnRobot.LogoFacingDirection.UP,
-                RevHubOrientationOnRobot.UsbFacingDirection.LEFT));
+                RevHubOrientationOnRobot.LogoFacingDirection.RIGHT,
+                RevHubOrientationOnRobot.UsbFacingDirection.UP));
         // Without this, the REV Hub's orientation is assumed to be logo up / USB forward
         Imu.initialize(parameters);
 
@@ -133,11 +120,6 @@ public abstract class OpMode extends LinearOpMode {
 
     protected abstract void end();
 
-    public int left_middle_right_red = 0;
-    public int left_middle_right_blue = 2;
-
-    public double X_Value = 0;
-    public OpenCvCamera camera;
 
 
 }

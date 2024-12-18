@@ -8,6 +8,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;import stat
 import org.firstinspires.ftc.teamcode.DriveTrain.DriveTrain;
 
 import org.firstinspires.ftc.teamcode.Elevator.Elevator;
+import org.firstinspires.ftc.teamcode.Elevator.Elevator2;
 
 @Config
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp
@@ -17,112 +18,37 @@ public class TeleOp extends OpMode {
     protected void postInit() {
         Imu.resetYaw();
     }
-    Elevator elevator = new Elevator(armL, armR, intake, ANGLE, LeftServo, RightServo, trigger, angle);
+
     @Override
     public void run(){
 
-        Elevator elevator = new Elevator(armL, armR, intake, ANGLE, LeftServo, RightServo, trigger, angle);
+
+        DriveTrain driveTrain = new DriveTrain(DriveBackRight, DriveBackLeft, DriveFrontRight, DriveFrontLeft, telemetry, Imu);
+        Elevator2 lift = new Elevator2(armL, armR, intake_center, intake_left, intake_right, intake_AR, intake_AL, intAR);
+
+        boolean is_down = false;
+
         while (opModeIsActive()) {
-            DriveTrain driveTrain = new DriveTrain(DriveBackRight, DriveBackLeft, DriveFrontRight, DriveFrontLeft, telemetry, Imu);
+
             double forward = -gamepad1.left_stick_y;//-1 to 1
             double turn = gamepad1.right_stick_x;
             double drift = gamepad1.left_stick_x;
             double botHeading = Imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
-            double botAngle = Imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
-
-            if (gamepad1.a){
-                driveTrain.noa(forward, drift, turn, botHeading);
-            }else {
-                driveTrain.Roni(forward, drift, turn, botHeading);
-            }
-
-            if (Math.abs(-gamepad2.left_stick_y) > 0.2){
-                armR.setPower(-gamepad2.left_stick_y);
-                armL.setPower(-gamepad2.left_stick_y);
-            }else {
-                armR.setPower(0);
-                armL.setPower(0);
-            }
-
-            if (gamepad1.options) {
-                Imu.resetYaw();
-            }
-
-            if (gamepad1.x){
-                angle.setPosition(0.575);
-                trigger.setPosition(0);
-
-            }
-
-            if (gamepad1.b){
-                angle.setPosition(0.2);
-                angle.setPosition(0.5);
-            }
 
 
+            driveTrain.drive(-forward, -turn, drift, botHeading);
 
-            ///take in
-            if(gamepad2.b){
-                intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                intake.setPower(1);
+            if(gamepad1.x && !is_down){lift.extend(1, 2); lift.move_ARM(.75, 1.5); is_down = true;}
+            else if(gamepad1.x && is_down){lift.extend(-1, 4); lift.move_ARM(-.2, 1); is_down = false;}
 
-            }
-            ///put out
-            else if(gamepad2.a){
-                intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                intake.setPower(-1);
-            }
-            else {
-                intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                intake.setPower(0);
-            }
+            if(gamepad1.a){lift.Move_Elevator(2800);}
 
-            if(gamepad2.left_bumper){
-                elevator.check_State = true;
-                elevator.teleop_AngleLift(0,1);
-            }
-            else if(gamepad2.right_bumper){
-                elevator.check_State = true;
-                elevator.teleop_AngleLift(800,-1);
-            }
+            if (gamepad1.b){lift.spin(1, 5);}
 
-            if(gamepad2.left_trigger != 0 || gamepad2.right_trigger != 0) {
-                RightServo.setPower(gamepad2.left_trigger);
-                LeftServo.setPower(-gamepad2.right_trigger);
-            }else {
-                RightServo.setPower(0);
-                LeftServo.setPower(0);
-            }
 
-            if (gamepad2.x){
-                RightServo.setPower(-1);
-            }
-            if(gamepad2.y){
-                LeftServo.setPower(1);
-            }
-
-            if(gamepad2.dpad_up){
-                //elevator.teleop_daria();
-                elevator.daria();
-                //elevator.check_State = false;
-            }
-
-            if (gamepad2.dpad_down){
-                elevator.check_State = true;
-                elevator.teleop_lihi();
-                elevator.check_State = false;
-            }
-
-            if(gamepad2.dpad_right){
-                elevator.ResetAngle();
-                elevator.AngleLift(800,-1);
-            }
-
-            telemetry.addData("Left Lift: ", armL.getCurrentPosition());
-            telemetry.addData("Right Lift: ", armR.getCurrentPosition());
-            telemetry.addData("ANGLE: ", ANGLE.getCurrentPosition());
-            telemetry.addData("Gyro: ", botAngle);
-            telemetry.addData("is finished:  ", elevator.is_finished);
+            telemetry.addData("Gyro: ", botHeading);
+            telemetry.addData("EL: ", armL.getCurrentPosition());
+            telemetry.addData("ER: ", armR.getCurrentPosition());
             telemetry.update();
 
         }

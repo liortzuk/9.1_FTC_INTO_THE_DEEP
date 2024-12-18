@@ -41,37 +41,7 @@ public class DriveTrain {
         this.Kd = d;
     }
 
-    public void Roni(double y, double x, double rx, double botHeading){
-
-        FL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        FR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        BR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        BL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        // Rotate the movement direction counter to the bot's rotation
-        double rotX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
-        double rotY = x * Math.sin(-botHeading) + y * Math.cos(-botHeading);
-
-        rotX *= 1.1;  // Counteract imperfect strafing
-
-        // Denominator is the largest motor power (absolute value) or 1
-        // This ensures all the powers maintain the same ratio,
-        // but only if at least one is out of the range [-1, 1]
-        double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(rx), 1);
-        double frontLeftPower = (rotY - rotX - rx) / denominator;
-        double backLeftPower = (rotY + rotX - rx) / denominator;
-        double frontRightPower = (rotY - rotX + rx) / denominator;
-        double backRightPower = (rotY + rotX + rx) / denominator;
-
-        FL.setPower(frontLeftPower * .75);
-        BL.setPower(backLeftPower * .75);
-
-        FR.setPower(frontRightPower * .75);
-        BR.setPower(backRightPower * .75);
-
-    }
-
-    public void noa(double y, double x, double rx, double botHeading){
+    public void drive(double y, double x, double rx, double botHeading){
 
         FL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         FR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
