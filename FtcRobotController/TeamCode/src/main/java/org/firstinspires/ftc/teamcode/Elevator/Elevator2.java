@@ -25,7 +25,7 @@ public class Elevator2 {
     }
 
 
-    public void Move_Elevator(int x){
+    public void Move_Elevator(double x){
 
         PID pid = new PID(0.5, 0.2, 0.1, 0, 0);
 
@@ -51,8 +51,7 @@ public class Elevator2 {
         runtime.reset();
         while(sec > runtime.seconds()){
             intake_center.setPower(power);
-        }
-        intake_center.setPower(0);
+        }intake_center.setPower(0);
     }
 
     public void extend(double power, double sec){
@@ -68,7 +67,53 @@ public class Elevator2 {
         runtime.reset();
         while(sec > runtime.seconds()){
             intAR.setPower(power);
-        }intAR.setPower(0);
+        }
+    }
+
+    public void move_all_lol(double power,double sec,double pos){
+        move_lift(-power,sec);
+        extend(power,sec);
+        move_ARM(power,sec);
+        spin(power,sec);
+        Move_Elevator(pos);
+        move_lift(power,sec);
+    }
+
+
+
+    public void move_lift(double power, double sec) {
+        runtime.reset();
+
+        while (sec > runtime.seconds()) {
+
+            intake_AR.setPower(power);
+            intakeAL.setPower(power);
+
+        }
+
+        intake_AR.setPower(0);
+        intakeAL.setPower(0);
+    }
+
+    public void violleta(double power, double sec) {
+        runtime.reset();
+
+        while (sec > runtime.seconds()) {
+
+            intake_AR.setPower(power);
+            intakeAL.setPower(power);
+
+        }
+
+        intake_AR.setPower(0);
+        intakeAL.setPower(0);
+    }
+
+    public void liat(double power,double sec,double bitch){
+        violleta(power,sec);
+        extend(power,sec);
+        move_ARM(power,sec);
+        Move_Elevator(bitch);
     }
 
 }

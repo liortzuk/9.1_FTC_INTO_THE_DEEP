@@ -35,10 +35,19 @@ public class DriveTrain {
         this.telemetry = telemetry;
     }
 
-    public void setPID(double p, double i, double d) {
-        this.Kp = p;
-        this.Ki = i;
-        this.Kd = d;
+
+    public void side_drive(double power){
+        FL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        FR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        BR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        BL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+
+        FL.setPower(1 * power);
+        BL.setPower(-1 * power);
+
+        FR.setPower(-1 * power);
+        BR.setPower(1 * power);
     }
 
     public void drive(double y, double x, double rx, double botHeading){
@@ -70,6 +79,7 @@ public class DriveTrain {
         BR.setPower(backRightPower);
 
     }
+
 
     public void turnToGyro(double degrees){
         Imu.resetYaw();

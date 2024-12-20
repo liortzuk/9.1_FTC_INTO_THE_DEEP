@@ -30,28 +30,33 @@ public class TeleOp extends OpMode {
 
         while (opModeIsActive()) {
 
-            double forward = -gamepad1.left_stick_y;//-1 to 1
+            double forward = -gamepad1.left_stick_y; //-1 to 1
             double turn = gamepad1.right_stick_x;
             double drift = gamepad1.left_stick_x;
             double botHeading = Imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+            double botDeg = Imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
 
 
-            driveTrain.drive(-forward, -turn, drift, botHeading);
+            driveTrain.drive(forward, drift, turn, botHeading);
 
             if(gamepad1.x && !is_down){lift.extend(1, 2); lift.move_ARM(.75, 1.5); is_down = true;}
             else if(gamepad1.x && is_down){lift.extend(-1, 4); lift.move_ARM(-.2, 1); is_down = false;}
 
-            if(gamepad1.a){lift.Move_Elevator(2800);}
+            if(gamepad1.b){lift.move_all_lol(-1,3,2800); is_down=false;}
+            if (gamepad1.y){lift.move_lift(1, 4);}
 
-            if (gamepad1.b){lift.spin(1, 5);}
+            if (gamepad1.a){lift.Move_Elevator(-2800);}
 
+            if(gamepad1.start){Imu.resetYaw();}
 
-            telemetry.addData("Gyro: ", botHeading);
+            telemetry.addData("Gyro: ", botDeg);
             telemetry.addData("EL: ", armL.getCurrentPosition());
             telemetry.addData("ER: ", armR.getCurrentPosition());
+            telemetry.addData("servo power: ", intake_center.getPower());
             telemetry.update();
 
         }
+
     }
     @Override
     protected void end() {
