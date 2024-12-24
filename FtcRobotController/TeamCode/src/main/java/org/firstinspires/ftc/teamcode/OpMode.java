@@ -2,33 +2,23 @@ package org.firstinspires.ftc.teamcode;
 
 import static java.lang.Math.abs;
 
-import android.graphics.Camera;
-
-import org.firstinspires.ftc.teamcode.DriveTrain.DriveTrain;
-import org.firstinspires.ftc.teamcode.Elevator.Elevator;
 import com.acmerobotics.dashboard.FtcDashboard;
 
 
-import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
-import org.firstinspires.ftc.vision.VisionPortal;
-import org.firstinspires.ftc.vision.tfod.TfodProcessor;
-import org.openftc.easyopencv.OpenCvCamera;
 
 
 public abstract class OpMode extends LinearOpMode {
 
-    protected CRServo intake_AR, intake_AL, intake_right, intake_left, intake_center, intAR;
+    protected Servo intake_AR;
+    protected CRServo intake_right, intake_left, intake_center, intAR;
     protected DcMotorEx DriveFrontLeft, DriveFrontRight, DriveBackLeft, DriveBackRight, armR, armL;
     protected ElapsedTime runtime = new ElapsedTime();
 
@@ -63,21 +53,24 @@ public abstract class OpMode extends LinearOpMode {
 
         armR = hardwareMap.get(DcMotorEx.class,"ER");
         armR.setDirection(DcMotorEx.Direction.REVERSE );
+        armR.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         armR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         armR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        armR.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+
 
         armL = hardwareMap.get(DcMotorEx.class,"EL");
         armL.setDirection(DcMotorEx.Direction.REVERSE);
+        armL.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         armL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         armL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        armL.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+
 
         intake_right = hardwareMap.get(CRServo.class, "axonR");
         intake_left = hardwareMap.get(CRServo.class, "axonL");
 
-        intake_AR = hardwareMap.get(CRServo.class, "ointR");
-        intake_AL = hardwareMap.get(CRServo.class, "ointL");
+        intake_AR = hardwareMap.get(Servo.class, "ointR");
+        intake_AR.setPosition(0.5);
+        // intake_AL = hardwareMap.get(CRServo.class, "ointL");
 
         intAR =  hardwareMap.get(CRServo.class, "intAR");
 
