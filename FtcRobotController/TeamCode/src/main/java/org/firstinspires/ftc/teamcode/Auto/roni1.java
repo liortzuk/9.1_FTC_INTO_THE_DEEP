@@ -28,11 +28,11 @@ public class roni1 extends OpMode {
         run_to_point(driveTrain,4, 0, 0.5, 0, botHeading);
         sleep(100);
 
-        driveTrain.turnToGyro_minus(-15);
-        sleep(100);
+        driveTrain.turnToGyro_minus(-10);
+        sleep(200);
 
-        run_to_point(driveTrain,4.5, 0, -0.5, 0, 0);
-        sleep(500);
+        run_to_point(driveTrain,5.4, 0, -0.5, 0, 0);
+        sleep(100);
 
         // score
         lift.Move_Elevator(8000);
@@ -51,38 +51,43 @@ public class roni1 extends OpMode {
         driveTrain.turnToGyro_plus(20);
         sleep(100);
 
+        run_to_point(driveTrain, 1.45, 0, -0.5, 0, 0);
+        sleep(200);
+
         lift.extend(-1,1);
         lift.move_intake_AG(1);
         sleep(500);
 
-        intake_center_angle.setPosition(0.5);
+        intake_center_angle.setPosition(0.6);
         sleep(100);
         roni2_intake.setPosition(1);
-        sleep(100);
-        run_to_point(driveTrain, 1, 0, -0.5, 0, 0);
-        sleep(200);
+        sleep(500);
 
-        run_to_point(driveTrain, 1.5, 0, 0.5, 0, 0);
+        run_to_point(driveTrain, 1.45, 0, 0.5, 0, 0);
         sleep(100);
-        roni2_intake.setPosition(0.4);
-        sleep(100);
+
+        roni2_intake.setPosition(0.3);
+        sleep(1000);
 
         // change
         intake_AR.setPosition(.8);
-        lift.extend(.5, 1);
+        lift.extend(.2, 1);
         intake_center_angle.setPosition(0.2);
         sleep(500);
 
         lift.move_intake_AG(0.6);
-        sleep(500);
+        sleep(1000);
         roni2_intake.setPosition(1);
         sleep(1000);
         intake_center_angle.setPosition(0.7);
-        lift.extend(-0.75, 1);
+        lift.extend(-0.56, 1);
 
-        run_to_point(driveTrain, 2, 0, -0.5, 0, 0);
-        sleep(100);
         driveTrain.turnToGyro_minus(-25);
+        sleep(200);
+
+        run_to_point(driveTrain, 1, -0.5, 0, 0, 0);
+        sleep(100);
+
         run_to_point(driveTrain, 2, 0, -0.5, 0, 0);
         sleep(100);
 
@@ -91,11 +96,10 @@ public class roni1 extends OpMode {
         intake_AR.setPosition(0);
         sleep(500);
 
-
-       intake_AR.setPosition(0.7);
+        intake_AR.setPosition(0.7);
         sleep(500);
         lift.Move_Elevator(-8000);
-        sleep(100);
+        sleep(200);
     }
 
     @Override

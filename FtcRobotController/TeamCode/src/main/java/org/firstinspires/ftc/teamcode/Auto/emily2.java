@@ -38,7 +38,7 @@ public class emily2 extends OpMode {
         // put specimen
         lift.Move_Elevator(6000);
         sleep(500);
-        run_to_point(driveTrain,1,0,-1,0,botHeading);
+        run_to_point(driveTrain,1,0,-1,0, botHeading);
         sleep(500);
 
 
