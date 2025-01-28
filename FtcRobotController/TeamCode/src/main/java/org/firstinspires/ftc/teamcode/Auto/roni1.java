@@ -48,7 +48,7 @@ public class roni1 extends OpMode {
         sleep(100);
 
         // check point
-        driveTrain.turnToGyro_plus(20);
+        driveTrain.turnToGyro_plus(15);
         sleep(100);
 
         run_to_point(driveTrain, 1.45, 0, -0.5, 0, 0);
@@ -82,7 +82,7 @@ public class roni1 extends OpMode {
         intake_center_angle.setPosition(0.7);
         lift.extend(-0.56, 1);
 
-        driveTrain.turnToGyro_minus(-25);
+        driveTrain.turnToGyro_minus(-15);
         sleep(200);
 
         run_to_point(driveTrain, 1, -0.5, 0, 0, 0);
