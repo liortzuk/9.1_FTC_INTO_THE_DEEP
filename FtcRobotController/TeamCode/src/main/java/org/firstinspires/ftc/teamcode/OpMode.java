@@ -14,11 +14,15 @@ import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.teamcode.DriveTrain.DriveTrain;
+import org.firstinspires.ftc.teamcode.Elevator.Elevator2;
+
 
 public abstract class OpMode extends LinearOpMode {
 
-    protected Servo intake_AR;
-    protected CRServo intake_right, intake_left, intake_center, intAR;
+    protected Servo intake_AR, intAR, roni_IA, intake_center_angle, roni2_intake;
+    protected CRServo intake_right, intake_left;
     protected DcMotorEx DriveFrontLeft, DriveFrontRight, DriveBackLeft, DriveBackRight, armR, armL;
     protected ElapsedTime runtime = new ElapsedTime();
 
@@ -28,65 +32,64 @@ public abstract class OpMode extends LinearOpMode {
 
     void initialize() {
         DriveFrontLeft = hardwareMap.get(DcMotorEx.class, "FL");
-        DriveFrontLeft.setDirection(DcMotor.Direction.FORWARD);
-        DriveFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        DriveFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        DriveFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        DriveFrontLeft.setDirection(DcMotorEx.Direction.FORWARD);
+        DriveFrontLeft.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        DriveFrontLeft.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        DriveFrontLeft.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 
         DriveFrontRight = hardwareMap.get(DcMotorEx.class, "FR");
-        DriveFrontRight.setDirection(DcMotor.Direction.REVERSE);
-        DriveFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        DriveFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        DriveFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        DriveFrontRight.setDirection(DcMotorEx.Direction.REVERSE);
+        DriveFrontRight.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        DriveFrontRight.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        DriveFrontRight.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 
         DriveBackLeft = hardwareMap.get(DcMotorEx.class, "BL");
-        DriveBackLeft.setDirection(DcMotor.Direction.FORWARD);
-        DriveBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        DriveBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        DriveBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        DriveBackLeft.setDirection(DcMotorEx.Direction.FORWARD);
+        DriveBackLeft.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        DriveBackLeft.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        DriveBackLeft.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 
         DriveBackRight = hardwareMap.get(DcMotorEx.class, "BR");
-        DriveBackRight.setDirection(DcMotor.Direction.REVERSE);
-        DriveBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        DriveBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        DriveBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        DriveBackRight.setDirection(DcMotorEx.Direction.REVERSE);
+        DriveBackRight.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        DriveBackRight.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        DriveBackRight.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 
         armR = hardwareMap.get(DcMotorEx.class,"ER");
         armR.setDirection(DcMotorEx.Direction.REVERSE );
         armR.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-        armR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        armR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        armR.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        armR.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
 
 
         armL = hardwareMap.get(DcMotorEx.class,"EL");
         armL.setDirection(DcMotorEx.Direction.REVERSE);
         armL.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-        armL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        armL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        armL.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        armL.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
 
 
         intake_right = hardwareMap.get(CRServo.class, "axonR");
         intake_left = hardwareMap.get(CRServo.class, "axonL");
 
         intake_AR = hardwareMap.get(Servo.class, "ointR");
-        intake_AR.setPosition(0.5);
-        // intake_AL = hardwareMap.get(CRServo.class, "ointL");
+        intake_AR.setPosition(0.75);
 
-        intAR =  hardwareMap.get(CRServo.class, "intAR");
+        roni_IA = hardwareMap.get(Servo.class, "roni");
+        roni_IA.setPosition(0.45);
 
-        intake_center = hardwareMap.get(CRServo.class, "intakeWheel");
+        roni2_intake = hardwareMap.get(Servo.class, "roni2");
 
+        intAR =  hardwareMap.get(Servo.class, "intAR");
 
-        // Retrieve the IMU from the hardware map
+        intake_center_angle = hardwareMap.get(Servo.class, "intakeWheel");
+
         Imu = hardwareMap.get(IMU.class, "imu");
-        // Adjust the orientation parameters to match your robot in our case it's UP and LEFT
         IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
                 RevHubOrientationOnRobot.LogoFacingDirection.RIGHT,
                 RevHubOrientationOnRobot.UsbFacingDirection.UP));
-        // Without this, the REV Hub's orientation is assumed to be logo up / USB forward
         Imu.initialize(parameters);
 
-        Imu.resetYaw();
 
 
     }
@@ -114,6 +117,78 @@ public abstract class OpMode extends LinearOpMode {
     protected abstract void end();
 
 
+
+    public void Move_all(){
+        Elevator2 lift = new Elevator2(armL, armR, intake_center_angle, intake_left, intake_right, intake_AR, intAR, telemetry);;
+
+        lift.Move_Elevator(8000);
+        intake_AR.setPosition(0);
+        sleep(1000);
+
+        intake_AR.setPosition(0.7);
+        sleep(1000);
+        lift.Move_Elevator(-8000);
+    }
+
+
+    public void drive_abs_point(DriveTrain driveTrain,double pos_x,  double pos_y, double power_rx, double botHeading) {
+        pos_x = pos_x * 3000;
+        pos_y = pos_y * 3000;
+
+        DriveBackLeft.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        DriveFrontRight.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        PID pid = new PID(5, 3, 0, 0, 0);
+        PID pid2 = new PID(5, 3, 0, 0, 0);
+
+        pid.setWanted(pos_y);
+        pid2.setWanted(pos_x);
+
+        double power_x, power_y = 0;
+
+        while (Math.abs(DriveBackLeft.getCurrentPosition()) < Math.abs(pos_y) || Math.abs(DriveFrontRight.getCurrentPosition()) < Math.abs(pos_x)){
+            power_y = pid.update(DriveBackLeft.getCurrentPosition());
+            power_x = pid2.update(DriveFrontRight.getCurrentPosition());
+
+            driveTrain.drive(power_y, power_x, power_rx, botHeading);
+        }
+    }
+
+
+    public void run_to_point(DriveTrain driveTrain,double pos, double power_x, double power_y, double power_rx, double botHeading){
+
+        pos = pos * 1500;
+
+        DriveBackLeft.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        DriveFrontRight.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+
+        if(Math.abs(power_y) > Math.abs(power_x)){
+            while (Math.abs(DriveBackLeft.getCurrentPosition()) < Math.abs(pos)){
+                driveTrain.drive(power_y, power_x, power_rx, botHeading);
+                telemetry.addData("IMU", botHeading);
+                telemetry.addData("BL", DriveBackLeft.getCurrentPosition());
+                telemetry.update();
+            }
+            driveTrain.stop();
+        }else if(Math.abs(power_x) > Math.abs(power_y)){
+            while (Math.abs(DriveFrontRight.getCurrentPosition()) < Math.abs(pos)){
+                driveTrain.drive(power_y, power_x, power_rx, botHeading);
+                telemetry.addData("IMU", botHeading);
+                telemetry.addData("BR", DriveFrontRight.getCurrentPosition());
+                telemetry.update();
+            }
+            driveTrain.stop();
+        }else if(Math.abs(power_rx) > Math.abs(power_y)){
+            while (Math.abs(DriveFrontRight.getCurrentPosition()) < Math.abs(pos)){
+                driveTrain.drive(power_y, power_x, power_rx, botHeading);
+                telemetry.addData("IMU", botHeading);
+                telemetry.addData("BR", DriveFrontRight.getCurrentPosition());
+                telemetry.update();
+            }
+            driveTrain.stop();
+        }
+
+
+    }
 
 }
 

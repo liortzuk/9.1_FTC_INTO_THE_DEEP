@@ -67,8 +67,9 @@ public class DriveTrain {
         // This ensures all the powers maintain the same ratio,
         // but only if at least one is out of the range [-1, 1]
         double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(rx), 1);
-        double frontLeftPower = (rotY - rotX - rx) / denominator;
-        double backLeftPower = (rotY + rotX - rx) / denominator;
+        double frontLeftPower = (rotY + rotX - rx) / denominator;
+        double backLeftPower = (rotY - rotX - rx) / denominator;
+
         double frontRightPower = (rotY - rotX + rx) / denominator;
         double backRightPower = (rotY + rotX + rx) / denominator;
 
@@ -81,105 +82,62 @@ public class DriveTrain {
     }
 
 
-    public void turnToGyro(double degrees){
-        Imu.resetYaw();
-        double error = degrees + Math.abs(Imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
 
-        while (Math.abs(error) > 15) {
-                double botAngle = Math.abs(Imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
+    public void turnToGyro_minus(double degrees) {
+        double botAngle = Math.abs(Imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
+        PID pid = new PID(2, 3, 0, 0, 0);
 
-                double wantedPose = (degrees * COUNTS_PER_CM) / 14;
-                PID pid = new PID(0.5,0.2,0.1,0,0);
-                pid.setWanted(wantedPose);
-                FL.setPower(-pid.update(FL.getCurrentPosition()));
-                FR.setPower(pid.update(FL.getCurrentPosition()));
+        pid.setWanted(degrees);
 
-                BR.setPower(pid.update(FL.getCurrentPosition()));
-                BL.setPower(-pid.update(FL.getCurrentPosition()));
-                error = degrees - botAngle;
+        if(degrees < 0){
+            while (botAngle >= degrees) {
+                botAngle = Imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
 
-            }
+                FL.setPower(-Math.abs(pid.update(botAngle)));
+                FR.setPower(Math.abs(pid.update(botAngle)));
+
+                BR.setPower(Math.abs(pid.update(botAngle)));
+                BL.setPower(-Math.abs(pid.update(botAngle)));
+
+                telemetry.addData("IMU", botAngle);
+                telemetry.update();
+
+            }stop();
+        }
+    }
+
+    public void turnToGyro_plus(double degrees) {
+        double botAngle = Math.abs(Imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
+        PID pid = new PID(5, 0, 0, 0, 0);
+
+        BR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        BR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        degrees = degrees * (1500.0 / 40.0);
+
+        double pos = BR.getCurrentPosition();
+        pid.setWanted(degrees);
+
+        while (Math.abs(pos) <= Math.abs(degrees)) {
+                pos = BR.getCurrentPosition();
+
+                FL.setPower(Math.abs(pid.update(pos)));
+                BL.setPower(Math.abs(pid.update(pos)));
+
+                FR.setPower(-Math.abs(pid.update(pos)));
+                FR.setPower(-Math.abs(pid.update(pos)));
+
+                telemetry.addData("IMU", botAngle);
+                telemetry.update();
+
+            }stop();
+    }
+
+
+        public void stop(){
             FL.setPower(0);
             FR.setPower(0);
             BR.setPower(0);
             BL.setPower(0);
         }
-
-
-
-    public void driveTo(double cm){
-        FL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        BL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        FR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        BR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        FL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        BL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        FR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        BR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        double positionWanted = 0;
-        PID pid = new PID(0.5, 0.2, 0.1, 0, 0);
-
-        positionWanted = (cm * COUNTS_PER_CM) / 14;
-        pid.setWanted((int)positionWanted);
-
-        while (Math.abs(positionWanted)> Math.abs(FL.getCurrentPosition()) + 2){
-            FL.setPower(pid.update(FL.getCurrentPosition()) / 2);
-            BL.setPower(pid.update(FL.getCurrentPosition()) / 2);
-
-            FR.setPower(pid.update(FL.getCurrentPosition()));
-            BR.setPower(pid.update(FL.getCurrentPosition()));
-        }
-
-        FL.setPower(0);
-        BL.setPower(0);
-        FR.setPower(0);
-        BR.setPower(0);
-
-        FL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        BL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        FR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        BR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-    }
-
-    public void SideWalk(double cm){
-        FL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        BL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        FR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        BR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        FL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        BL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        FR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        BR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        double positionWanted = 0;
-        PID pid = new PID(0.5, 0.2, 0.1, 0, 0);
-
-        positionWanted = (cm * COUNTS_PER_CM) / 14;
-        pid.setWanted((int)positionWanted);
-
-        while (Math.abs(positionWanted) > Math.abs(FL.getCurrentPosition())){
-            FL.setPower(-pid.update(FL.getCurrentPosition()));
-            BL.setPower(pid.update(FL.getCurrentPosition()));
-
-            FR.setPower(-pid.update(FL.getCurrentPosition()));
-            BR.setPower(pid.update(FL.getCurrentPosition()));
-        }
-        FL.setPower(0);
-        BL.setPower(0);
-        FR.setPower(0);
-        BR.setPower(0);
-
-        FL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        BL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        FR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        BR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-    }
-
-
 }
