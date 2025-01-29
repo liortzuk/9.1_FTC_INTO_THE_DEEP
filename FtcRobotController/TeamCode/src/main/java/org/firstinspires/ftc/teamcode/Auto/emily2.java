@@ -35,12 +35,33 @@ public class emily2 extends OpMode {
         driveTrain.turnToGyro_minus(-8);
         sleep(500);
 
-        // put specimen
+        run_to_point(driveTrain,1, 0.5, 0, 0, botHeading);
+        sleep(500);
+
+        // lift up the specimen
         lift.Move_Elevator(6000);
         sleep(500);
         run_to_point(driveTrain,1,0,-1,0, botHeading);
         sleep(500);
 
+
+        // score
+        run_to_point(driveTrain,2.4, 0, -0.5, 0, botHeading);
+        sleep(500);
+
+        lift.Move_Elevator(-6000);
+        sleep(500);
+
+        run_to_point(driveTrain,1,0,0.5,0,botHeading);
+        sleep(100);
+
+        driveTrain.turnToGyro_plus(45);
+
+        sleep(500);
+        driveTrain.turnToGyro_plus(90);
+        sleep(500);
+
+        Imu.resetYaw();
 
 
     }
