@@ -21,16 +21,18 @@ public class emily1 extends OpMode {
         driveTrain.turnToGyro_plus(Math.abs(botDeg));
         sleep(500);
 
+
+
         // get to basket
         run_to_point(driveTrain,2,0,1,0,botHeading);
         sleep(100);
         run_to_point(driveTrain,2,-1,0,0,botHeading);
         sleep(100);
-        driveTrain.turnToGyro_minus(-15);
+        driveTrain.turnToGyro_minus(-25);
         sleep(100);
 
         // adjust placement
-        run_to_point(driveTrain,1.68,0,-1,0,0);
+        run_to_point(driveTrain,2.3,0,-1,0,0);
         sleep(100);
 
         // put in basket
@@ -49,7 +51,7 @@ public class emily1 extends OpMode {
 
 
         // check point
-        driveTrain.turnToGyro_minus(-15);
+        driveTrain.turnToGyro_plus(15);
         sleep(100);
 
         run_to_point(driveTrain, 1.45, 0, -0.5, 0, 0);
@@ -83,7 +85,7 @@ public class emily1 extends OpMode {
         intake_center_angle.setPosition(0.7);
         lift.extend(-0.56, 1);
 
-        driveTrain.turnToGyro_plus(15);
+        driveTrain.turnToGyro_minus(-15);
         sleep(200);
 
         run_to_point(driveTrain, 1, -0.5, 0, 0, 0);

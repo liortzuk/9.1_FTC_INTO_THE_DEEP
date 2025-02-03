@@ -76,7 +76,7 @@ public abstract class OpMode extends LinearOpMode {
         intake_AR.setPosition(0.75);
 
         roni_IA = hardwareMap.get(Servo.class, "roni");
-        roni_IA.setPosition(0.45);
+        roni_IA.setPosition(0.2);
 
         roni2_intake = hardwareMap.get(Servo.class, "roni2");
 
@@ -131,26 +131,54 @@ public abstract class OpMode extends LinearOpMode {
     }
 
 
-    public void drive_abs_point(DriveTrain driveTrain,double pos_x,  double pos_y, double power_rx, double botHeading) {
-        pos_x = pos_x * 3000;
+    public void drive_abs_point(DriveTrain driveTrain,double pos_x,  double pos_y) {
+        pos_x = pos_x * 1500;
         pos_y = pos_y * 3000;
 
-        DriveBackLeft.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-        DriveFrontRight.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-        PID pid = new PID(5, 3, 0, 0, 0);
-        PID pid2 = new PID(5, 3, 0, 0, 0);
+        PID pid = new PID(2, 0, 0, 0, 0);
+        PID pid2 = new PID(2, 0, 0, 0, 0);
 
         pid.setWanted(pos_y);
         pid2.setWanted(pos_x);
 
         double power_x, power_y = 0;
+        double botHeading;
 
-        while (Math.abs(DriveBackLeft.getCurrentPosition()) < Math.abs(pos_y) || Math.abs(DriveFrontRight.getCurrentPosition()) < Math.abs(pos_x)){
+        while (Math.abs(DriveBackLeft.getCurrentPosition()) < Math.abs(pos_y) || Math.abs(DriveFrontRight.getCurrentPosition()) > Math.abs(pos_x)){
             power_y = pid.update(DriveBackLeft.getCurrentPosition());
             power_x = pid2.update(DriveFrontRight.getCurrentPosition());
+            botHeading = Imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
 
-            driveTrain.drive(power_y, power_x, power_rx, botHeading);
-        }
+            driveTrain.drive(power_y, power_x, 0, botHeading);
+        }driveTrain.stop();
+    }
+    
+    public void turn_to_abs_pos(DriveTrain driveTrain, double degrees){
+
+        PID pid = new PID(5, 3, 0, 0, 0);
+        double rx = 0;
+        double botHeading;
+
+        degrees = degrees / 2;
+
+        // 90 = x: 1949 Y: -4101
+
+        double x = 21.66 * degrees;
+        double y = 45.57 * degrees;
+
+        pid.setWanted(x + y);
+
+        double xy =  x + y;
+
+        while (xy > Math.abs(DriveBackLeft.getCurrentPosition()) + DriveFrontRight.getCurrentPosition()){
+            rx = pid.update(Math.abs(DriveBackLeft.getCurrentPosition()) + Math.abs(DriveFrontRight.getCurrentPosition()));
+            botHeading = Imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+            driveTrain.drive(0,0, rx, botHeading);
+
+            telemetry.addData("current: ", Math.abs(DriveBackLeft.getCurrentPosition()) + Math.abs(DriveFrontRight.getCurrentPosition()));
+            telemetry.addData("wanted: ", xy);
+            telemetry.update();
+        }driveTrain.stop();
     }
 
 

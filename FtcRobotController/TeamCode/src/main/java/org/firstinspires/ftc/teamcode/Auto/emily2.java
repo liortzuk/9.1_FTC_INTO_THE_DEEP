@@ -41,13 +41,10 @@ public class emily2 extends OpMode {
         // lift up the specimen
         lift.Move_Elevator(6000);
         sleep(500);
-        run_to_point(driveTrain,1,0,-1,0, botHeading);
-        sleep(500);
+        run_to_point(driveTrain,2.4,0,-0.5, 0, botHeading);
 
 
         // score
-        run_to_point(driveTrain,2.4, 0, -0.5, 0, botHeading);
-        sleep(500);
 
         lift.Move_Elevator(-6000);
         sleep(500);
@@ -62,8 +59,6 @@ public class emily2 extends OpMode {
         sleep(500);
 
         Imu.resetYaw();
-
-
     }
 
     @Override

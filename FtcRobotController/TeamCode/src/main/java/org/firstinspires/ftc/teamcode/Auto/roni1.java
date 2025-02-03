@@ -14,6 +14,13 @@ public class roni1 extends OpMode {
 
         Elevator2 lift = new Elevator2(armL, armR, intake_center_angle, intake_left, intake_right, intake_AR, intAR, telemetry);
         DriveTrain driveTrain = new DriveTrain(DriveBackRight, DriveBackLeft, DriveFrontRight, DriveFrontLeft, telemetry, Imu);
+/*
+        turn_to_abs_pos(driveTrain,45);
+        sleep(100000);
+
+ */
+        drive_abs_point(driveTrain, 0, 1);
+        sleep(300000);
 
         double botHeading = Imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
 
@@ -28,7 +35,7 @@ public class roni1 extends OpMode {
         run_to_point(driveTrain,4, 0, 0.5, 0, botHeading);
         sleep(100);
 
-        driveTrain.turnToGyro_minus(-10);
+        driveTrain.turnToGyro_minus(-15);
         sleep(200);
 
         run_to_point(driveTrain,5.4, 0, -0.5, 0, 0);
@@ -48,7 +55,7 @@ public class roni1 extends OpMode {
         sleep(100);
 
         // check point
-        driveTrain.turnToGyro_plus(15);
+        driveTrain.turnToGyro_plus(27);
         sleep(100);
 
         run_to_point(driveTrain, 1.45, 0, -0.5, 0, 0);
@@ -63,7 +70,7 @@ public class roni1 extends OpMode {
         roni2_intake.setPosition(1);
         sleep(500);
 
-        run_to_point(driveTrain, 1.45, 0, 0.5, 0, 0);
+        run_to_point(driveTrain, 1.65, 0, 0.5, 0, 0);
         sleep(100);
 
         roni2_intake.setPosition(0.3);
@@ -82,13 +89,11 @@ public class roni1 extends OpMode {
         intake_center_angle.setPosition(0.7);
         lift.extend(-0.56, 1);
 
-        driveTrain.turnToGyro_minus(-15);
+        driveTrain.turnToGyro_minus(-20);
         sleep(200);
 
-        run_to_point(driveTrain, 1, -0.5, 0, 0, 0);
-        sleep(100);
 
-        run_to_point(driveTrain, 2, 0, -0.5, 0, 0);
+        run_to_point(driveTrain, 2.5, 0, -0.5, 0, 0);
         sleep(100);
 
         // score

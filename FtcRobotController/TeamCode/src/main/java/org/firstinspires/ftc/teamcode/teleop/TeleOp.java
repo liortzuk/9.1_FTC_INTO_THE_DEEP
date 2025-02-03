@@ -56,23 +56,23 @@ public class TeleOp extends OpMode {
             else if (gamepad1.b) {roni2_intake.setPosition(0.6);}
 
             if (gamepad1.y){intake_center_angle.setPosition(1); lift.extend(-1, 1); lift.move_intake_AG(0.95);}
-            if (gamepad1.x){intake_center_angle.setPosition(0.5); lift.extend(-1, 1); lift.move_intake_AG(1);}
+            if (gamepad1.x){intake_center_angle.setPosition(0.55); lift.extend(-1, 1); lift.move_intake_AG(1);}
 
             if(gamepad1.dpad_up && !is_up){lift.move_intake_AG(0.75);is_up = true;}
             else if (gamepad1.dpad_down && is_up) {lift.move_intake_AG(1); is_up = false;}
 
-            if(gamepad1.dpad_left){intake_AR.setPosition(0);sleep(500);intake_AR.setPosition(0.6);}
+            if(gamepad1.dpad_left){intake_AR.setPosition(0.3);}
 
 
 
             if(gamepad1.right_bumper ){
                 intake_AR.setPosition(.8);
-                lift.extend(.5, 1);
+                lift.extend(1,0.2);
                 intake_center_angle.setPosition(0.2);
                 sleep(500);
 
                 lift.move_intake_AG(0.6);
-                sleep(500);
+                sleep(1000);
                 roni2_intake.setPosition(1);
                 sleep(1000);
                 intake_center_angle.setPosition(0.7);
@@ -98,6 +98,8 @@ public class TeleOp extends OpMode {
             if(gamepad1.back){Imu.resetYaw();}
 
             telemetry.addData("IMU: ", botDeg);
+            telemetry.addData("center x: ", DriveFrontRight.getCurrentPosition());
+            telemetry.addData("y: ", DriveBackLeft.getCurrentPosition());
             telemetry.update();
 
         }
