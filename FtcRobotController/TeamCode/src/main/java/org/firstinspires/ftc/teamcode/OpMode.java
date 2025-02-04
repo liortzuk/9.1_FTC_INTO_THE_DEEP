@@ -89,6 +89,7 @@ public abstract class OpMode extends LinearOpMode {
                 RevHubOrientationOnRobot.LogoFacingDirection.RIGHT,
                 RevHubOrientationOnRobot.UsbFacingDirection.UP));
         Imu.initialize(parameters);
+        Imu.resetYaw();
 
 
 
@@ -132,11 +133,11 @@ public abstract class OpMode extends LinearOpMode {
 
 
     public void drive_abs_point(DriveTrain driveTrain,double pos_x,  double pos_y) {
-        pos_x = pos_x * 1500;
-        pos_y = pos_y * 3000;
+        pos_x = pos_x * 15000;
+        pos_y = pos_y * 5000;
 
-        PID pid = new PID(2, 0, 0, 0, 0);
-        PID pid2 = new PID(2, 0, 0, 0, 0);
+        PID pid = new PID(0.05, 0.03, 0, 0, 0);
+        PID pid2 = new PID(0.05, 0.03, 0, 0, 0);
 
         pid.setWanted(pos_y);
         pid2.setWanted(pos_x);
@@ -144,20 +145,31 @@ public abstract class OpMode extends LinearOpMode {
         double power_x, power_y = 0;
         double botHeading;
 
-        while (Math.abs(DriveBackLeft.getCurrentPosition()) < Math.abs(pos_y) || Math.abs(DriveFrontRight.getCurrentPosition()) > Math.abs(pos_x)){
+        while (DriveBackLeft.getCurrentPosition() < pos_y){
             power_y = pid.update(DriveBackLeft.getCurrentPosition());
+            botHeading = Imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+
+            driveTrain.drive(power_y, 0, 0, botHeading);
+        }driveTrain.stop();
+
+        while (DriveFrontRight.getCurrentPosition() < pos_x){
             power_x = pid2.update(DriveFrontRight.getCurrentPosition());
             botHeading = Imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
 
-            driveTrain.drive(power_y, power_x, 0, botHeading);
+            driveTrain.drive(0, power_x, 0, botHeading);
         }driveTrain.stop();
     }
-    
-    public void turn_to_abs_pos(DriveTrain driveTrain, double degrees){
+
+
+
+    public void turn_to_relative_pos(DriveTrain driveTrain, double degrees){
 
         PID pid = new PID(5, 3, 0, 0, 0);
         double rx = 0;
         double botHeading;
+
+        double pos_x = Math.abs(DriveFrontRight.getCurrentPosition());
+        double pos_y = Math.abs(DriveBackLeft.getCurrentPosition());
 
         degrees = degrees / 2;
 
@@ -170,15 +182,16 @@ public abstract class OpMode extends LinearOpMode {
 
         double xy =  x + y;
 
-        while (xy > Math.abs(DriveBackLeft.getCurrentPosition()) + DriveFrontRight.getCurrentPosition()){
-            rx = pid.update(Math.abs(DriveBackLeft.getCurrentPosition()) + Math.abs(DriveFrontRight.getCurrentPosition()));
+        while (xy > Math.abs(DriveBackLeft.getCurrentPosition() - pos_y) + Math.abs(DriveFrontRight.getCurrentPosition() - pos_x)){
+            rx = pid.update(Math.abs(DriveBackLeft.getCurrentPosition() - pos_y) + Math.abs(DriveFrontRight.getCurrentPosition() - pos_x));
             botHeading = Imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
             driveTrain.drive(0,0, rx, botHeading);
 
-            telemetry.addData("current: ", Math.abs(DriveBackLeft.getCurrentPosition()) + Math.abs(DriveFrontRight.getCurrentPosition()));
+            telemetry.addData("current: ", Math.abs(DriveBackLeft.getCurrentPosition() - pos_y) + Math.abs(DriveFrontRight.getCurrentPosition() - pos_x));
             telemetry.addData("wanted: ", xy);
             telemetry.update();
         }driveTrain.stop();
+
     }
 
 

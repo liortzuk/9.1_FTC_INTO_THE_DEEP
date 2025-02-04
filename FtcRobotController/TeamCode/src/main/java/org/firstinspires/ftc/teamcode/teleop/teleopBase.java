@@ -43,6 +43,9 @@ public class teleopBase extends OPMODE_BASE {
         Button intake_1 = new GamepadButton(
                 driverOp, GamepadKeys.Button.Y
         );
+        Button intake_2 = new GamepadButton(
+                driverOp, GamepadKeys.Button.X
+        );
 
         while (opModeIsActive()) {
             forward = -gamepad1.left_stick_y; //-1 to 1
@@ -53,6 +56,7 @@ public class teleopBase extends OPMODE_BASE {
             schedule(dr);
 
             intake_1.whenPressed(ex_out);
+            intake_2.whenPressed(ex_in);
 
             CommandScheduler.getInstance().run();
         }

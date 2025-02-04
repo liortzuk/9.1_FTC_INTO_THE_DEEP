@@ -12,19 +12,19 @@ public class roni1 extends OpMode {
     @Override
     protected void run() {
 
+         double botDeg = Imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
         Elevator2 lift = new Elevator2(armL, armR, intake_center_angle, intake_left, intake_right, intake_AR, intAR, telemetry);
         DriveTrain driveTrain = new DriveTrain(DriveBackRight, DriveBackLeft, DriveFrontRight, DriveFrontLeft, telemetry, Imu);
-/*
-        turn_to_abs_pos(driveTrain,45);
-        sleep(100000);
 
- */
         drive_abs_point(driveTrain, 0, 1);
-        sleep(300000);
+        sleep(1000);
+        drive_abs_point(driveTrain, 2, 4.5);
+        turn_to_relative_pos(driveTrain, 115);
+        sleep(50000);
 
         double botHeading = Imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
 
-        double botDeg = Imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+        botDeg = Imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
 
 
 
