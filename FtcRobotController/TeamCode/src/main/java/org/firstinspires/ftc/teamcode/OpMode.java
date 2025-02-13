@@ -154,7 +154,7 @@ public abstract class OpMode extends LinearOpMode {
         }driveTrain.stop();
     }
 
-
+// up?
    public void Transfer_sample(Elevator2 lift){
        intake_AR.setPosition(.8);
        lift.extend(0.2,1);
