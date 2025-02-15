@@ -139,36 +139,94 @@ public abstract class OpMode extends LinearOpMode {
         double power_x, power_y = 0;
         double botHeading;
 
-        while (DriveBackLeft.getCurrentPosition() < pos_y + 100 || DriveBackLeft.getCurrentPosition() > pos_y - 100){
-            power_y = sigmoid_velocity_control(DriveBackLeft.getCurrentPosition(), pos_y);
-            botHeading = Imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+        if(Math.abs(DriveBackLeft.getCurrentPosition()) < Math.abs(pos_y)){
+            while (DriveBackLeft.getCurrentPosition() < pos_y){
+                double direction = 1;
 
-            driveTrain.drive(power_y, 0, 0, botHeading);
-        }driveTrain.stop();
+                if(pos_y != 0){
+                    direction = pos_y / Math.abs(pos_y);
+                }
 
-        while (DriveFrontRight.getCurrentPosition() < pos_x + 100 || DriveFrontRight.getCurrentPosition() > pos_x - 100){
-            power_x = sigmoid_velocity_control(DriveFrontRight.getCurrentPosition(), pos_y);
-            botHeading = Imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+                power_y = sigmoid_velocity_control(DriveBackLeft.getCurrentPosition(), pos_y) * direction;
+                botHeading = Imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
 
-            driveTrain.drive(0, power_x, 0, botHeading);
-        }driveTrain.stop();
+                driveTrain.drive(power_y, 0, 0, botHeading);
+            }driveTrain.stop();
+        } else if (Math.abs(DriveBackLeft.getCurrentPosition()) > Math.abs(pos_y)) {
+            while (DriveBackLeft.getCurrentPosition() > pos_y){
+                double direction = 1;
+
+                if(pos_y != 0){
+                    direction = pos_y / Math.abs(pos_y);
+                }
+
+                power_y = sigmoid_velocity_control(DriveBackLeft.getCurrentPosition(), pos_y) * direction;
+                botHeading = Imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+
+                driveTrain.drive(power_y, 0, 0, botHeading);
+            }driveTrain.stop();
+        }
+
+        if(Math.abs(DriveFrontRight.getCurrentPosition()) < Math.abs(pos_x)){
+            while (DriveFrontRight.getCurrentPosition() < pos_x){
+
+                double direction = 1;
+
+                if(pos_x != 0){
+                    direction = pos_x / Math.abs(pos_x);
+                }
+
+                power_x = sigmoid_velocity_control(DriveFrontRight.getCurrentPosition(), pos_y) * direction;
+                botHeading = Imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+
+                driveTrain.drive(0, power_x, 0, botHeading);
+            }driveTrain.stop();
+        }else if(Math.abs(DriveFrontRight.getCurrentPosition()) > Math.abs(pos_x)){
+            while (DriveFrontRight.getCurrentPosition() > pos_x){
+
+                double direction = 1;
+
+                if(pos_x != 0){
+                    direction = pos_x / Math.abs(pos_x);
+                }
+
+                power_x = sigmoid_velocity_control(DriveFrontRight.getCurrentPosition(), pos_y) * direction;
+                botHeading = Imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+
+                driveTrain.drive(0, power_x, 0, botHeading);
+            }driveTrain.stop();
+        }
+
     }
 
-// up?
-   public void Transfer_sample(Elevator2 lift){
-       intake_AR.setPosition(.8);
-       lift.extend(0.2,1);
-       intake_center_angle.setPosition(0.2);
-       sleep(500);
 
-       lift.move_intake_AG(0.6);
-       sleep(1000);
-       roni2_intake.setPosition(1);
-       sleep(500);
-       lift.extend(-0.56,1);
-   }
+    public double sigmoid_velocity_control(double current_pos, double wanted_pos){
+        double vy = cal_v(wanted_pos, current_pos) / cal_y(wanted_pos, current_pos);
+        return 2*(1 / (1 + Math.pow(Math.exp(1), -vy)-0.5));
+    }
 
-   public void Sample_to_Basket(Elevator2 lift){
+    public double cal_y(double wanted_pos, double current_pos){
+        return (wanted_pos - current_pos) / 4;
+    }
+
+    public double cal_v(double wanted_pos, double current_pos){
+        return (wanted_pos - current_pos) / (0.5 + Math.abs(wanted_pos - current_pos));
+    }
+
+    public void Transfer_sample(Elevator2 lift){
+        intake_AR.setPosition(.8);
+        lift.extend(0.2,1);
+        intake_center_angle.setPosition(0.2);
+        sleep(500);
+
+        lift.move_intake_AG(0.6);
+        sleep(1000);
+        roni2_intake.setPosition(1);
+        sleep(500);
+        lift.extend(-0.56,1);
+    }
+
+    public void Sample_to_Basket(Elevator2 lift){
         lift.Move_Elevator(8000);
         intake_AR.setPosition(0);
         sleep(500);
@@ -177,19 +235,6 @@ public abstract class OpMode extends LinearOpMode {
         sleep(500);
         lift.Move_Elevator(-8000);
         sleep(200);
-   }
-
-    public double sigmoid_velocity_control(double current_pos, double wanted_pos){
-        double power = 2*(1 / (1 + Math.pow(Math.exp(1), -cal_v(wanted_pos, current_pos) / cal_y(wanted_pos, current_pos))-0.5));
-        return power;
-    }
-
-    public double cal_y(double wanted_pos, double current_pos){
-        return (wanted_pos - current_pos) / 4;
-    }
-
-    public double cal_v(double wanted_pos, double current_pos){
-        return (wanted_pos - current_pos) / (Math.pow(10, -10) + Math.abs(wanted_pos - current_pos));
     }
 
 
