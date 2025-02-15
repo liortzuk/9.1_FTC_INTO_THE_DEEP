@@ -56,7 +56,7 @@ public class TeleOp extends OpMode {
             else if (gamepad1.b) {roni2_intake.setPosition(0.6);}
 
             if (gamepad1.y){intake_center_angle.setPosition(1); lift.extend(-1, 1); lift.move_intake_AG(0.95);}
-            if (gamepad1.x){intake_center_angle.setPosition(0.55); lift.extend(-1, 1); lift.move_intake_AG(1);}
+            if (gamepad1.x){intake_center_angle.setPosition(0.65); lift.extend(-1, 1); lift.move_intake_AG(1);}
 
             if(gamepad1.dpad_up && !is_up){lift.move_intake_AG(0.75);is_up = true;}
             else if (gamepad1.dpad_down && is_up) {lift.move_intake_AG(1); is_up = false;}
