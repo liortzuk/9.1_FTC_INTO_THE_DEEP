@@ -22,7 +22,7 @@ public class roni1 extends OpMode {
         turn_to_abs_pos(driveTrain,310);
         Sample_to_Basket(lift);
         sleep(21000);
-
+//
         // secound point(center)
         turn_to_abs_pos(driveTrain,30);
         drive_abs_point(driveTrain, -0.5, 0.5);
