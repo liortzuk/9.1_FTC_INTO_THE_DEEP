@@ -12,9 +12,6 @@ import org.firstinspires.ftc.teamcode.DriveTrain.DriveTrain;
 import org.firstinspires.ftc.teamcode.Elevator.Elevator2;
 import org.firstinspires.ftc.teamcode.OpMode;
 import org.firstinspires.ftc.teamcode.PID;
-import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
-import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
-import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceBuilder;
 @com.qualcomm.robotcore.eventloop.opmode.Autonomous(name="malulinomous", group="Robot")
 public class malulinomous extends OpMode {
     @Override

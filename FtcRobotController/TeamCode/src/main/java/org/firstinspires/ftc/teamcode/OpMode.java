@@ -96,6 +96,8 @@ public abstract class OpMode extends LinearOpMode {
 
     }
 
+    public double error;
+    public double last_point;
 
     @Override
     public void runOpMode() throws InterruptedException  {
@@ -132,35 +134,39 @@ public abstract class OpMode extends LinearOpMode {
         lift.Move_Elevator(-8000);
     }
 
-    public void turn_to_abs_pos(DriveTrain driveTrain, double degrees, double pos_y){
+    public void turn_to_abs_pos(DriveTrain driveTrain, double degrees){
 
         PID pid = new PID(5, 3, 0, 0, 0);
         double rx = 0;
         double botHeading;
+        double threshold = 270;
 
-        // 90 = x: 1949 Y: -4101
+        degrees = degrees / 2;
 
         double y = 45.57 * degrees;
+        double x = 21.66 * degrees;
+        double xy = x + y;
+        double cp = DriveBackLeft.getCurrentPosition()  + DriveFrontRight.getCurrentPosition();
 
-        pos_y *= 5000;
+        pid.setWanted(cp + xy - threshold - error);
 
-        pid.setWanted(pos_y + y);
-
-        while (pos_y + y > Math.abs(DriveBackLeft.getCurrentPosition() - pos_y)){
-
-            rx = pid.update(Math.abs(DriveBackLeft.getCurrentPosition() - pos_y));
+        while (cp + xy - threshold - error > DriveBackLeft.getCurrentPosition() + DriveFrontRight.getCurrentPosition() && last_point != degrees){
+            rx = -pid.update(DriveBackLeft.getCurrentPosition() + DriveFrontRight.getCurrentPosition());
             botHeading = Imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
-            driveTrain.drive(0,0, rx, botHeading);
+            driveTrain.drive(0,0, rx / 2, botHeading);
 
-            telemetry.addData("current: ", Math.abs(DriveBackLeft.getCurrentPosition() - pos_y));
-            telemetry.addData("wanted: ", pos_y + y);
+            telemetry.addData("current: ", DriveBackLeft.getCurrentPosition() + DriveFrontRight.getCurrentPosition());
+            telemetry.addData("wanted: ", cp + xy);
             telemetry.update();
         }driveTrain.stop();
+
+        error = (cp + xy) - (DriveBackLeft.getCurrentPosition() + DriveFrontRight.getCurrentPosition());
+        last_point = degrees;
     }
 
 
 
-    public void drive_abs_point(DriveTrain driveTrain,double pos_x,  double pos_y) {
+    public void drive_abs_point(DriveTrain driveTrain, double pos_x,  double pos_y) {
         pos_x = pos_x * 15000;
         pos_y = pos_y * 5000;
         double threashold = 100;
@@ -223,13 +229,13 @@ public abstract class OpMode extends LinearOpMode {
                     direction = pos_x / Math.abs(pos_x);
                 }
 
-                power_x = sigmoid_velocity_control(DriveFrontRight.getCurrentPosition(), pos_y) * direction;
+                power_x = sigmoid_velocity_control(DriveFrontRight.getCurrentPosition(), pos_x) * direction;
                 botHeading = Imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
 
                 driveTrain.drive(0, power_x, 0, botHeading);
             }driveTrain.stop();
         }
-
+        error = 15;
     }
 
 
@@ -324,7 +330,7 @@ public abstract class OpMode extends LinearOpMode {
         intake_AR.setPosition(0.55);
         sleep(500);
         lift.Move_Elevator(-8000);
-        sleep(100);
+        sleep(1000);
     }
 
 

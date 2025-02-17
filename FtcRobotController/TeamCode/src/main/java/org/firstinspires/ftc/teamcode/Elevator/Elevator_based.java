@@ -32,8 +32,6 @@ public class Elevator_based extends SubsystemBase {
 
 
 
-
-
     public void Move_Elevator(double x){
 
         ER.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);

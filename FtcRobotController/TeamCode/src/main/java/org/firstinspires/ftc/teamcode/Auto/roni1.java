@@ -12,10 +12,25 @@ public class roni1 extends OpMode {
     @Override
     protected void run() {
 
-         double botDeg = Imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+        double botDeg = Imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
         Elevator2 lift = new Elevator2(armL, armR, intake_center_angle, intake_left, intake_right, intake_AR, intAR, telemetry);
         DriveTrain driveTrain = new DriveTrain(DriveBackRight, DriveBackLeft, DriveFrontRight, DriveFrontLeft, telemetry, Imu);
 
+        // first point(score)
+        drive_abs_point(driveTrain, -.64, 0.02);
+        sleep(100);
+        turn_to_abs_pos(driveTrain,310);
+        Sample_to_Basket(lift);
+        sleep(21000);
+
+        // secound point(center)
+        turn_to_abs_pos(driveTrain,30);
+        drive_abs_point(driveTrain, -0.5, 0.5);
+        sleep(10000);
+
+
+
+     /*
         drive_abs_point(driveTrain, 0, 1);
         sleep(1000);
         drive_abs_point(driveTrain, 2, 4.5);
@@ -105,6 +120,10 @@ public class roni1 extends OpMode {
         sleep(500);
         lift.Move_Elevator(-8000);
         sleep(200);
+
+      */
+
+
     }
 
     @Override

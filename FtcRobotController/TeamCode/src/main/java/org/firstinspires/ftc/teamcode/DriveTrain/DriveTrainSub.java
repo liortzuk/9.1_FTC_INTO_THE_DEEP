@@ -14,7 +14,7 @@ public class DriveTrainSub extends SubsystemBase {
 
     private DcMotorEx BR, BL, FR, FL;
     private BNO055IMU imu;
-    private IMU Imu;
+    public IMU Imu;
     private Telemetry telemetry;
     private LinearOpMode opMode;
     ElapsedTime runtime = new ElapsedTime();
