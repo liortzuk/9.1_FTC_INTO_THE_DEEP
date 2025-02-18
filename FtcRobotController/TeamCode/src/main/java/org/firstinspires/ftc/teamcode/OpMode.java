@@ -160,6 +160,7 @@ public abstract class OpMode extends LinearOpMode {
 
         // drive using y
         while (Math.abs(pos_y) + threshold_y + error_y > Math.abs(DriveBackLeft.getCurrentPosition()) && Math.abs(pos_y) - threshold_y + error_y > Math.abs(DriveBackLeft.getCurrentPosition())) {
+            // we don't use it but the function still takes it bcs it's the same function as the one in the TeleOp
             botHeading = Imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
             power_y = sigmoid_velocity_control(Math.abs(DriveBackLeft.getCurrentPosition()), Math.abs(pos_y )+ error_y) * direction_y;
             driveTrain.drive(power_y, 0, 0, botHeading);
