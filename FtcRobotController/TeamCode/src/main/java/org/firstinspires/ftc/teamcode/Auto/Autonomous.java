@@ -23,39 +23,6 @@ public class Autonomous extends OpMode {
         DriveTrain driveTrain = new DriveTrain(DriveBackRight, DriveBackLeft, DriveFrontRight, DriveFrontLeft, telemetry, Imu);
 
 
-        // preload sample
-        drive_abs_point(driveTrain, -.65, 0.2);
-        turn_to_abs_pos(driveTrain,300);
-        sleep(100);
-
-        Sample_to_Basket(lift);
-
-        // first sample
-        turn_to_abs_pos(driveTrain,25);
-        drive_abs_point(driveTrain,-0.45,.4);
-        sleep(100);
-
-        Take_Sample(lift);
-        Transfer_sample(lift);
-
-        drive_abs_point(driveTrain,-0.74,0.5);
-        turn_to_abs_pos(driveTrain,45);
-
-        Sample_to_Basket(lift);
-
-        // second sample
-        drive_abs_point(driveTrain,-1,2);
-        turn_to_relative_pos(driveTrain,315);
-
-        Take_Sample(lift);
-        Transfer_sample(lift);
-
-        drive_abs_point(driveTrain,-0.74,0.5);
-        turn_to_relative_pos(driveTrain,45);
-
-        Sample_to_Basket(lift);
-
-
 
     }
 

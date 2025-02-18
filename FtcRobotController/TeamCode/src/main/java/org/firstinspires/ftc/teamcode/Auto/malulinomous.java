@@ -21,30 +21,6 @@ public class malulinomous extends OpMode {
 
         double botHeading = Imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
 
-        // preload specimen
-        drive_abs_point(driveTrain,0.3,1);
-
-        turn_to_relative_pos(driveTrain,180);
-        Specimen_Drop(lift,driveTrain);
-
-        // specimen 2
-        drive_abs_point(driveTrain,3.5,0.5);
-
-        //pickup
-        turn_to_relative_pos(driveTrain,180);
-        lift.Move_Elevator(1200);
-        sleep(100);
-        roni_IA.setPosition(0.85);
-        drive_abs_point(driveTrain,3.5,0.05);
-        roni_IA.setPosition(0.2);
-
-        //go to center
-        drive_abs_point(driveTrain,0.3,1);
-        turn_to_relative_pos(driveTrain,180);
-        Specimen_Drop(lift,driveTrain);
-
-        drive_abs_point(driveTrain,0,0);
-
     }
 
     @Override
