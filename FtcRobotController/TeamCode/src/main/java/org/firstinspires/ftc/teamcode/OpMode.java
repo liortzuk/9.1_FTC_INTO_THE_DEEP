@@ -146,8 +146,8 @@ public abstract class OpMode extends LinearOpMode {
         pos_y = pos_y * 5000;
 
         // thresholds for x and y are different because x and y have different ticks values
-        double threshold_y = 1000;
-        double threshold_x = 100;
+        double threshold_y = 100;
+        double threshold_x = 1000;
 
         // init bot-heading and power x,y (you don't really need bot-heading but i still like it)
         double botHeading;
