@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.Auto;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+
 import org.firstinspires.ftc.teamcode.OpMode;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -7,7 +9,7 @@ import org.firstinspires.ftc.teamcode.DriveTrain.DriveTrain;
 import org.firstinspires.ftc.teamcode.Elevator.Elevator2;
 
 @com.qualcomm.robotcore.eventloop.opmode.Autonomous(name="blue specimen / emily2 :(", group="Robot")
-
+@Disabled
 
 public class emily2 extends OpMode {
     @Override

@@ -63,8 +63,8 @@ public class Elevator2 {
     public void extend(double pow, double sec){
         runtime.reset();
         while(sec > runtime.seconds()){
-            intake_right.setPower(-pow);
-            intake_left.setPower(pow);
+            intake_right.setPower(pow);
+            intake_left.setPower(-pow);
         }
         intake_left.setPower(0);
         intake_right.setPower(0);

@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Auto;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -7,7 +8,7 @@ import org.firstinspires.ftc.teamcode.DriveTrain.DriveTrain;
 import org.firstinspires.ftc.teamcode.Elevator.Elevator2;
 import org.firstinspires.ftc.teamcode.OpMode;
 @com.qualcomm.robotcore.eventloop.opmode.Autonomous(name="red specimen / roni_2 :)", group="Robot")
-
+@Disabled
 public class roni2 extends OpMode{
     @Override
     protected void run() {

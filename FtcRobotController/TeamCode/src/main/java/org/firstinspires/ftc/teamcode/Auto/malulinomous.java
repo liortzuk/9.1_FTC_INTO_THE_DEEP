@@ -13,6 +13,7 @@ import org.firstinspires.ftc.teamcode.Elevator.Elevator2;
 import org.firstinspires.ftc.teamcode.OpMode;
 import org.firstinspires.ftc.teamcode.PID;
 @com.qualcomm.robotcore.eventloop.opmode.Autonomous(name="malulinomous", group="Robot")
+@Disabled
 public class malulinomous extends OpMode {
     @Override
     protected void run() {

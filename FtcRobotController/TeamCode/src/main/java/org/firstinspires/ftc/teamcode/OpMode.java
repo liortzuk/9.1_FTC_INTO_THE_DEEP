@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import static java.lang.Math.abs;
+import static java.lang.Math.floor;
 import static java.lang.Math.sin;
 
 import com.acmerobotics.dashboard.FtcDashboard;
@@ -11,6 +12,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -33,19 +35,19 @@ public abstract class OpMode extends LinearOpMode {
 
     void initialize() {
         DriveFrontLeft = hardwareMap.get(DcMotorEx.class, "FL");
-        DriveFrontLeft.setDirection(DcMotorEx.Direction.FORWARD);
+        DriveFrontLeft.setDirection(DcMotorEx.Direction.REVERSE);
         DriveFrontLeft.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         DriveFrontLeft.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         DriveFrontLeft.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 
         DriveFrontRight = hardwareMap.get(DcMotorEx.class, "FR");
-        DriveFrontRight.setDirection(DcMotorEx.Direction.REVERSE);
+        DriveFrontRight.setDirection(DcMotorEx.Direction.FORWARD);
         DriveFrontRight.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         DriveFrontRight.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         DriveFrontRight.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 
         DriveBackLeft = hardwareMap.get(DcMotorEx.class, "BL");
-        DriveBackLeft.setDirection(DcMotorEx.Direction.FORWARD);
+        DriveBackLeft.setDirection(DcMotorEx.Direction.REVERSE);
         DriveBackLeft.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         DriveBackLeft.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         DriveBackLeft.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
@@ -57,14 +59,14 @@ public abstract class OpMode extends LinearOpMode {
         DriveBackRight.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 
         armR = hardwareMap.get(DcMotorEx.class,"ER");
-        armR.setDirection(DcMotorEx.Direction.REVERSE );
+        armR.setDirection(DcMotorEx.Direction.FORWARD );
         armR.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         armR.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         armR.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
 
 
         armL = hardwareMap.get(DcMotorEx.class,"EL");
-        armL.setDirection(DcMotorEx.Direction.REVERSE);
+        armL.setDirection(DcMotorEx.Direction.FORWARD);
         armL.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         armL.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         armL.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
@@ -95,7 +97,8 @@ public abstract class OpMode extends LinearOpMode {
 
 
     }
-
+    //why the fuck is this global
+    public double error_deg;
     public double error_y = 0;
     public double error_x = 0;
 
@@ -135,7 +138,7 @@ public abstract class OpMode extends LinearOpMode {
     }
 
 
-    public void drive_relative_distance(DriveTrain driveTrain, double pos_x,  double pos_y){
+    public void drive_relative_distance(DriveTrain driveTrain, double pos_x,  double pos_y, boolean is_final){
 
         // reset the encoder
         DriveFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -155,78 +158,187 @@ public abstract class OpMode extends LinearOpMode {
         double power_x;
 
         // get the direction (forwards or backwards)
-        double direction_x = pos_x / Math.abs(pos_x);
-        double direction_y = pos_y / Math.abs(pos_y);
+        double direction_x = 1;
+        double direction_y = 1;
 
+        if(pos_y != 0){
+            direction_y = pos_y / Math.abs(pos_y);
+        }
+
+        if (pos_x != 0){
+            direction_x = pos_x / Math.abs(pos_x);
+        }
+
+        // old code lior
         // drive using y
         while (Math.abs(pos_y) + threshold_y + error_y > Math.abs(DriveBackLeft.getCurrentPosition()) && Math.abs(pos_y) - threshold_y + error_y > Math.abs(DriveBackLeft.getCurrentPosition())) {
-            // we don't use it but the function still takes it bcs it's the same function as the one in the TeleOp
-            botHeading = Imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
             power_y = sigmoid_velocity_control(Math.abs(DriveBackLeft.getCurrentPosition()), Math.abs(pos_y )+ error_y) * direction_y;
-            driveTrain.drive(power_y, 0, 0, botHeading);
-        } error_y += Math.abs(pos_y) - Math.abs(DriveBackLeft.getCurrentPosition());
+            driveTrain.drive(power_y, 0, 0, 0);
+        }driveTrain.stop();
 
         // drive using x
         while (Math.abs(pos_x) + threshold_x + error_x > Math.abs(DriveFrontRight.getCurrentPosition()) && Math.abs(pos_x) - threshold_x + error_x > Math.abs(DriveFrontRight.getCurrentPosition())) {
-            botHeading = Imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
-            power_x = sigmoid_velocity_control(Math.abs(DriveFrontRight.getCurrentPosition()), Math.abs(pos_x) + error_y) * direction_x;
-            driveTrain.drive(0, power_x, 0, botHeading);
-        } error_y += Math.abs(pos_x) - Math.abs(DriveFrontRight.getCurrentPosition());
+            power_x = sigmoid_velocity_control(Math.abs(DriveFrontRight.getCurrentPosition()), Math.abs(pos_x) + error_x) * direction_x;
+            driveTrain.drive(0, power_x, 0, 0);
+        }driveTrain.stop();
 
+        error_y = Math.abs(pos_y) - Math.abs(DriveBackLeft.getCurrentPosition());
+        error_x = Math.abs(pos_x) - Math.abs(DriveFrontRight.getCurrentPosition());
+
+        // only at the final block(tile)
+        if(is_final){
+            // drive using y
+            while (Math.abs(pos_y) + threshold_y + error_y > Math.abs(DriveBackLeft.getCurrentPosition())) {
+                power_y = sigmoid_velocity_control(Math.abs(DriveBackLeft.getCurrentPosition()), Math.abs(pos_y )+ error_y) * direction_y;
+                driveTrain.drive(power_y, 0, 0, 0);
+            }driveTrain.stop();
+
+            // drive using x
+            while (Math.abs(pos_x) + threshold_x + error_x > Math.abs(DriveFrontRight.getCurrentPosition())) {
+                power_x = sigmoid_velocity_control(Math.abs(DriveFrontRight.getCurrentPosition()), Math.abs(pos_x) + error_y) * direction_x;
+                driveTrain.drive(0, power_x, 0, 0);
+            }driveTrain.stop();
+            error_y = Math.abs(pos_y) - Math.abs(DriveBackLeft.getCurrentPosition());
+            error_x = Math.abs(pos_x) - Math.abs(DriveFrontRight.getCurrentPosition());
+        }
+
+    }
+    public void drive_abs_point(DriveTrain driveTrain, double pos_x,  double pos_y) {
+        pos_x = pos_x * 15000;
+        pos_y = pos_y * 5000;
+        double threashold = 100;
+
+        double power_x, power_y = 0;
+        double botHeading;
+
+
+        if(Math.abs(DriveBackLeft.getCurrentPosition()) < Math.abs(pos_y)){
+            while (Math.abs(DriveBackLeft.getCurrentPosition()) + threashold < Math.abs(pos_y) && Math.abs(DriveBackLeft.getCurrentPosition()) - threashold < Math.abs(pos_y)){
+                double direction = 1;
+
+                if(pos_y != 0){
+                    direction = pos_y / Math.abs(pos_y);
+                }
+
+                power_y = sigmoid_velocity_control(DriveBackLeft.getCurrentPosition(), pos_y) * direction;
+                botHeading = Imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+
+                driveTrain.drive(power_y, 0, 0, botHeading);
+
+            }driveTrain.stop();
+        } else if (Math.abs(DriveBackLeft.getCurrentPosition()) > Math.abs(pos_y)) {
+            while (Math.abs(DriveBackLeft.getCurrentPosition()) + threashold > Math.abs(pos_y) && Math.abs(DriveBackLeft.getCurrentPosition()) - threashold > Math.abs(pos_y)){
+                double direction = -1;
+
+                if(pos_y != 0){
+                    direction = pos_y / Math.abs(pos_y);
+                }
+
+                power_y = sigmoid_velocity_control(DriveBackLeft.getCurrentPosition(), pos_y) * direction;
+                botHeading = Imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+
+                driveTrain.drive(power_y, 0, 0, botHeading);
+
+            }driveTrain.stop();
+        }
+
+        if(Math.abs(DriveFrontRight.getCurrentPosition()) < Math.abs(pos_x)){
+
+            while ((Math.abs(DriveFrontRight.getCurrentPosition()) + threashold < Math.abs(pos_x) && Math.abs(DriveFrontRight.getCurrentPosition()) - threashold < Math.abs(pos_x))){
+
+                double direction = 1;
+
+                if(pos_x != 0){
+                    direction = pos_x / Math.abs(pos_x);
+                }
+
+                power_x = sigmoid_velocity_control(DriveFrontRight.getCurrentPosition(), pos_y) * direction;
+                botHeading = Imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+
+                driveTrain.drive(0, power_x, 0, botHeading);
+            }driveTrain.stop();
+        }else if(Math.abs(DriveFrontRight.getCurrentPosition()) > Math.abs(pos_x)){
+            while ((Math.abs(DriveFrontRight.getCurrentPosition()) + threashold > Math.abs(pos_x) && Math.abs(DriveFrontRight.getCurrentPosition()) - threashold > Math.abs(pos_x))){
+
+                double direction = -1;
+
+                if(pos_x != 0){
+                    direction = pos_x / Math.abs(pos_x);
+                }
+
+                power_x = sigmoid_velocity_control(DriveFrontRight.getCurrentPosition(), pos_x) * direction;
+                botHeading = Imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+
+                driveTrain.drive(0, power_x, 0, botHeading);
+            }driveTrain.stop();
+        }
     }
 
 
     public void turn(DriveTrain driveTrain, double degrees){
-        DriveFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        // you can use negative degrees to turn right!!!
+
+        if(degrees > 0){
+            degrees = degrees - 22;
+        }else {
+            degrees = degrees + 22;
+        }
+
+
+        // reset pos
         DriveBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
+        // define the pid
         PID pid = new PID(5, 3, 0, 0, 0);
+
+        // init rx
         double rx = 0;
-        double botHeading;
-        degrees = degrees / 2;
 
-        double y = 45.57 * degrees;
-        double x = 21.66 * degrees;
-        double xy = x + y;
-        double cp = DriveBackLeft.getCurrentPosition()  + DriveFrontRight.getCurrentPosition();
+        // init y
+        double y = Math.abs(45.57 * degrees);
 
-        pid.setWanted(cp + xy);
+        // set the wanted pos
+        pid.setWanted(y);
 
-        while (cp + xy > DriveBackLeft.getCurrentPosition() + DriveFrontRight.getCurrentPosition()){
-            rx = -pid.update(DriveBackLeft.getCurrentPosition() + DriveFrontRight.getCurrentPosition());
-            botHeading = Imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
-            driveTrain.drive(0,0, rx / 2, botHeading);
+        // get the direction (left || right)
+        double direction = degrees / Math.abs(degrees);
 
-            telemetry.addData("current: ", DriveBackLeft.getCurrentPosition() + DriveFrontRight.getCurrentPosition());
-            telemetry.addData("wanted: ", cp + xy);
-            telemetry.update();
-        }driveTrain.stop();
+        // turn until you reach the goal pos
+        while (y > Math.abs(DriveBackLeft.getCurrentPosition())){
+            rx = pid.update(Math.abs(DriveBackLeft.getCurrentPosition())) * direction;
+            driveTrain.drive(0,0, rx, 0);
+
+        }
+        // stop the drive train to cancel movement
+        driveTrain.stop();
     }
 
 
 
     public double sigmoid_velocity_control(double current_pos, double wanted_pos){
-        double vy = cal_v(wanted_pos, current_pos) / cal_y(wanted_pos, current_pos);
+        double vy = cal_v(wanted_pos, current_pos) / cal_y(wanted_pos);
         return Math.abs(2*(1 / (1 + Math.pow(Math.exp(1), -vy)-0.5)));
     }
 
-    public double cal_y(double wanted_pos, double current_pos){
-        return (wanted_pos - current_pos) / 4;
+    public double cal_y(double wanted_pos){
+        return (wanted_pos) / 4;
     }
 
     public double cal_v(double wanted_pos, double current_pos){
-        return (wanted_pos - current_pos) / (0.5 + Math.abs(wanted_pos - current_pos));
+        return (wanted_pos - current_pos) / (0.00001 + Math.abs(wanted_pos - current_pos));
     }
 
-   public  void Take_Sample(Elevator2 lift){
-       lift.extend(-1,1);
-       lift.move_intake_AG(1);
+   public  void Take_SampleP1(Elevator2 lift) {
+       lift.extend(-1, 1);
+       lift.move_intake_AG(0.65);
        sleep(500);
 
        intake_center_angle.setPosition(0.6);
        sleep(100);
        roni2_intake.setPosition(1);
-       sleep(500);
+       sleep(200);
+   }
+    public  void Take_SampleP2(Elevator2 lift){
 
        roni2_intake.setPosition(0.3);
        sleep(100);
@@ -238,7 +350,7 @@ public abstract class OpMode extends LinearOpMode {
         intake_center_angle.setPosition(0.2);
         sleep(500);
 
-        lift.move_intake_AG(0.6);
+        lift.move_intake_AG(0.15);
         sleep(1000);
         roni2_intake.setPosition(1);
         sleep(500);

@@ -15,7 +15,7 @@ public class TeleOp extends OpMode {
 
     @Override
     protected void postInit() {
-        Imu.resetYaw();  intake_AR.setPosition(0.65);
+        Imu.resetYaw();  intake_AR.setPosition(0.55);
     }
 
 
@@ -29,11 +29,10 @@ public class TeleOp extends OpMode {
         boolean is_up = false;
 
 
-        double forward = -gamepad1.left_stick_y; //-1 to 1
-        double turn = gamepad1.right_stick_x;
-        double drift = gamepad1.left_stick_x;
-        double botHeading = Imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
-        double botDeg = Imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+        double forward; //-1 to 1
+        double turn;
+        double drift;
+        double botHeading;
         boolean is_in = false;
         boolean is_down = false;
 
@@ -43,7 +42,7 @@ public class TeleOp extends OpMode {
             turn = gamepad1.right_stick_x;
             drift = gamepad1.left_stick_x;
             botHeading = Imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
-            botDeg = Imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+
 
             if(gamepad1.right_trigger > 0.0){
                 driveTrain.drive(forward * 0.3, drift * 0.4, turn, botHeading);
@@ -54,11 +53,11 @@ public class TeleOp extends OpMode {
             if (gamepad1.a){roni2_intake.setPosition(0.4); }
             else if (gamepad1.b) {roni2_intake.setPosition(0.6);}
 
-            if (gamepad1.y){intake_center_angle.setPosition(1); lift.extend(-1, 1); lift.move_intake_AG(0.95);}
-            if (gamepad1.x){intake_center_angle.setPosition(0.55); lift.extend(-1, 1); lift.move_intake_AG(1);}
+            if (gamepad1.y){lift.extend(-1, 1);sleep(100); lift.move_intake_AG(0.6); sleep(100); intake_center_angle.setPosition(1);}
+            if (gamepad1.x){lift.extend(-1, 1);sleep(100);  lift.move_intake_AG(0.65); sleep(100); intake_center_angle.setPosition(0.55); }
 
-            if(gamepad1.dpad_up && !is_up){lift.move_intake_AG(0.75);is_up = true;}
-            else if (gamepad1.dpad_down && is_up) {lift.move_intake_AG(1); is_up = false;}
+            if(gamepad1.dpad_up && !is_up){lift.move_intake_AG(0.2);is_up = true;}
+            else if (gamepad1.dpad_down && is_up) {lift.move_intake_AG(0.65); is_up = false;}
 
             if(gamepad1.dpad_left){intake_AR.setPosition(0.3);}
 
@@ -69,7 +68,7 @@ public class TeleOp extends OpMode {
                 intake_center_angle.setPosition(0.2);
                 sleep(500);
 
-                lift.move_intake_AG(0.6);
+                lift.move_intake_AG(0.15);
                 sleep(1000);
                 roni2_intake.setPosition(1);
                 sleep(1000);
@@ -95,7 +94,7 @@ public class TeleOp extends OpMode {
 
             if(gamepad1.back){Imu.resetYaw();}
 
-            telemetry.addData("IMU: ", botDeg);
+            telemetry.addData("IMU: ", botHeading);
             telemetry.addData("center x: ", DriveFrontRight.getCurrentPosition());
             telemetry.addData("y: ", DriveBackLeft.getCurrentPosition());
             telemetry.update();
