@@ -15,7 +15,7 @@ public class roni1 extends OpMode {
         Elevator2 lift = new Elevator2(armL, armR, intake_center_angle, intake_left, intake_right, intake_AR, intAR, telemetry);
         DriveTrain driveTrain = new DriveTrain(DriveBackRight, DriveBackLeft, DriveFrontRight, DriveFrontLeft, telemetry, Imu);
 
-        // first point lol
+        // first point
         drive_relative_distance(driveTrain, -0.66, 0.2, false);
         sleep(500);
         turn(driveTrain,45);
